@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 
-import sys
 import time
 import hashlib
 import json
 import os
-import re
 import requests
 import yaml
-from urllib.request import quote
+from urllib.parse import quote
 
-type BufoData = dict[str, tuple(str, int)]
+type BufoData = dict[str, tuple[str, int]]
 type BufoMap = dict[str, BufoData]
 
 
@@ -47,19 +45,22 @@ class BufoAnalyzer:
 
             result_json = resp.json()
 
-            results |= {
-                self._hash(x["name"]): {
-                    "user_id_hash": self._hash(x["user_id"]),
-                    "created_at": x["created"],
+            if result_json.get("ok"):
+                results |= {
+                    self._hash(x["name"]): {
+                        "user_id_hash": self._hash(x["user_id"]),
+                        "created_at": x["created"],
+                    }
+                    for x in result_json["emoji"]
                 }
-                for x in resp.json()["emoji"]
-            }
 
-            cur_page = result_json["paging"]["page"]
-            total_pages = result_json["paging"]["pages"]
+                cur_page = result_json["paging"]["page"]
+                total_pages = result_json["paging"]["pages"]
 
-            if cur_page == total_pages:
-                break
+                if cur_page == total_pages:
+                    break
+            else:
+                raise Exception(f"Unable to poll Slack API: {result_json.get('error')}")
 
         return results
 
