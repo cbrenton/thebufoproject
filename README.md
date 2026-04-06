@@ -14,7 +14,7 @@ The prompt will ask for your slack workspace name. On the same emoji upload page
 
 You can either paste these into the prompt, or bypass the prompt by creating `creds.yaml` that looks like this:
 ```
-workspace: something
+slack_workspace: something
 user_token: xoxc-some-gibberish
 session_token: xoxd-some-gibberish
 ```
@@ -23,9 +23,11 @@ session_token: xoxd-some-gibberish
 ## What data does this script output?
 This outputs a json file, which maps bufo names to uploader ids and creation time.
 
-Bufo names are pseudoanonymized - they're hashed and truncated - to do our best to obfuscate emoji names. We don't want to risk someone leaking the existence of, for example, a project called xkeyscore by uploading :bufo-is-angry-at-xkeyscore: to our database.
+With the --super-secure-flag, bufo names are pseudoanonymized - they're hashed and truncated - to do our best to obfuscate emoji names. You might not want to risk someone leaking the existence of, for example, a project called xkeyscore by uploading :bufo-is-angry-at-xkeyscore: to our database. Be aware that a malicious attacker could in theory brute-force every possible emoji name, though it would take a few billion years.
 
 We also pseudoanonymize Slack user ids, just to be safe.
+
+When you specify -i/--download-images, we will also download your full bufoset locally. This can be useful for helping us compile the world's fullest bufoset, though it's not our primary goal with this project.
 
 Every bufo/emoji scraper script I've seen in the wild has not been this cautious - they all just scrape everything. I just wanted to be a bit more careful.
 
